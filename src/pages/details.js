@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-const main = () => (
+const Details = () => (
   <View>
     <View />
   </View>
@@ -9,4 +9,4 @@ const main = () => (
 
 const styles = StyleSheet.create({});
 
-export default main;
+export default Details;

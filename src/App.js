@@ -1,3 +1,5 @@
+import './config/ReactotronConfig';
+
 import React from 'react';
 
 import { Provider } from 'react-redux';
@@ -6,6 +8,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import Main from './pages/Main';
 import Details from './pages/Details';
+
+import store from './store';
 
 const Stack = createStackNavigator();
 
@@ -22,6 +26,7 @@ function StackNavigation() {
 
 const App = () => (
   <StackNavigation />
+
 );
 
 export default App;

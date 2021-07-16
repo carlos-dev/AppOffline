@@ -25,8 +25,9 @@ function StackNavigation() {
 }
 
 const App = () => (
-  <StackNavigation />
-
+  <Provider store={store}>
+    <StackNavigation />
+  </Provider>
 );
 
 export default App;

@@ -12,13 +12,13 @@ export default function getData(state = INITIAL_STATE, action) {
     case 'GET_DATA_SUCCESS':
       return {
         ...state,
-        data: action.payload,
+        data: action.payload.data,
         error: false,
         loading: false,
       };
     case 'GET_DATA_FAILURE':
       return {
-        data: action.payload,
+        data: action.payload.data,
         error: true,
         loading: false,
       };

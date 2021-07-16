@@ -6,14 +6,17 @@ import api from '../../services/api';
 
 import * as GetDataActions from '../actions/getData';
 
-function* getData() {
+function* getData(action) {
   try {
-    const data = action.payload;
-    const random = yield call(api.get, '/api');
+    const { page } = action.payload;
 
-    console.log(random);
+    const { data } = yield call(api.get, `/api/?results=${page}`);
+    console.log('data', data);
+
+    yield put(GetDataActions.getDataSuccess(data.results));
   } catch (error) {
-    console.log('error', error.response);
+    console.log('error', error.response.data);
+    yield put(GetDataActions.getDataFailure(error.response.data));
   }
 }
 

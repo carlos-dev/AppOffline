@@ -3,32 +3,30 @@ import {
   View, StyleSheet, Text, FlatList, ActivityIndicator, Image, Dimensions, TouchableOpacity,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Card, Title, Paragraph,
-} from 'react-native-paper';
 
 import * as GetDataActions from '../store/actions/getData';
 
 import scaleFontSize from '../utils/scaleFontSize';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const Item = ({ navigation, listData }) => (
-  <TouchableOpacity activeOpacity={0.7} style={styles.card}>
+  <TouchableOpacity activeOpacity={0.7} style={styles.card} onPress={() => navigation.navigate('Details', { user: listData.item.login.username })}>
     <Image style={styles.cardImage} source={{ uri: listData.item.picture.large }} />
 
-    <Card.Content>
-      <Text style={styles.title}>
+    <View style={styles.cardContent}>
+      <Text style={styles.title} numberOfLines={1}>
         {`${listData.item.name.first} ${listData.item.name.last}`}
       </Text>
 
-      <Paragraph>{listData.item.phone}</Paragraph>
-    </Card.Content>
+      <Text style={styles.number}>{listData.item.phone}</Text>
+    </View>
   </TouchableOpacity>
 );
 
 const Main = ({ navigation }) => {
   const [page, setPage] = useState(10);
+  const [arrayData, setArrayData] = useState([]);
 
   const dispatch = useDispatch();
   const { getData } = useSelector((state) => state);
@@ -37,16 +35,28 @@ const Main = ({ navigation }) => {
     dispatch(GetDataActions.getDataRequest(10));
   }, []);
 
+  useEffect(() => {
+    if (getData.loading) return;
+
+    if (getData.error) return;
+
+    if (getData.data) {
+      console.log('getData.data', getData.data);
+      setArrayData([...arrayData, ...getData.data]);
+    }
+  }, [getData]);
+
   const renderItem = (data) => (
     <Item navigation={navigation} listData={data} />
   );
 
   const loadPage = async () => {
+    console.log('loadPage');
+
     setPage(page + 1);
 
     await dispatch(GetDataActions.getDataRequest(page));
   };
-  console.log(getData.data);
 
   const renderFooter = () => (
     getData.loading && <ActivityIndicator color="#777" size="large" />
@@ -61,12 +71,14 @@ const Main = ({ navigation }) => {
         </View>
       ) : (
         <FlatList
-          data={getData.data}
+          data={arrayData}
           renderItem={renderItem}
           keyExtractor={(item, index) => String(index)}
           onEndReached={loadPage}
-          onEndReachedThreshold={0.1}
+          initialNumToRender={10}
+          onEndReachedThreshold={0.02}
           ListFooterComponent={renderFooter}
+          removeClippedSubviews
         />
       )}
     </View>
@@ -112,8 +124,19 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
   },
 
+  cardContent: {
+    padding: '3%',
+  },
+
   title: {
     fontSize: scaleFontSize(14),
+    fontWeight: 'bold',
+  },
+
+  number: {
+    fontSize: scaleFontSize(10),
+    color: '#444',
+    marginTop: '4%',
   },
 });
 

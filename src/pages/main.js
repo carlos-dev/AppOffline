@@ -1,38 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View, StyleSheet, Text, FlatList, ActivityIndicator, Image, Dimensions, TouchableOpacity,
+  View, StyleSheet, FlatList, ActivityIndicator, Button,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import withObservables from '@nozbe/with-observables';
+import RNFetchBlob from 'react-native-fetch-blob';
+
+import Card from '../components/Card';
 
 import * as GetDataActions from '../store/actions/getData';
-
-import scaleFontSize from '../utils/scaleFontSize';
-
-const { height } = Dimensions.get('window');
-
-const Item = ({ navigation, listData }) => (
-  <TouchableOpacity activeOpacity={0.7} style={styles.card} onPress={() => navigation.navigate('Details', { user: listData.item.login.username })}>
-    <Image style={styles.cardImage} source={{ uri: listData.item.picture.large }} />
-
-    <View style={styles.cardContent}>
-      <Text style={styles.title} numberOfLines={1}>
-        {`${listData.item.name.first} ${listData.item.name.last}`}
-      </Text>
-
-      <Text style={styles.number}>{listData.item.phone}</Text>
-    </View>
-  </TouchableOpacity>
-);
+import {
+  observePeople, savePeople, deleteAll, getPeople,
+} from '../database/helpers';
 
 const Main = ({ navigation }) => {
-  const [page, setPage] = useState(10);
   const [arrayData, setArrayData] = useState([]);
 
   const dispatch = useDispatch();
   const { getData } = useSelector((state) => state);
 
+  const getDataPeople = async () => {
+    const arrayPeople = [];
+
+    const response = await getPeople();
+    response.map((item) => (
+      arrayPeople.push(item._raw)
+    ));
+    setArrayData(arrayPeople);
+  };
+
   useEffect(() => {
     dispatch(GetDataActions.getDataRequest(10));
+
+    getDataPeople();
   }, []);
 
   useEffect(() => {
@@ -40,44 +40,89 @@ const Main = ({ navigation }) => {
 
     if (getData.error) return;
 
-    if (getData.data) {
-      console.log('getData.data', getData.data);
-      setArrayData([...arrayData, ...getData.data]);
-    }
+    if (!getData.data) return;
+
+    // deleteAll();
+
+    console.log('arrayPeople', arrayData);
   }, [getData]);
 
-  const renderItem = (data) => (
-    <Item navigation={navigation} listData={data} />
-  );
+  const renderItem = (data) =>
+    // console.log('data', data);
+    (
+      <Card
+        navigation={navigation}
+        listData={data}
+        localData={arrayData.length !== 0}
+      />
+    );
 
-  const loadPage = async () => {
-    console.log('loadPage');
+  const getExtention = (filename) => (/[.]/.exec(filename) ? /[^.]+$/.exec(filename) : undefined);
 
-    setPage(page + 1);
+  const downloadImage = (pictureThumbnail) => {
+    const date = new Date();
+    const imgUrl = pictureThumbnail;
 
-    await dispatch(GetDataActions.getDataRequest(page));
+    let ext = getExtention(imgUrl);
+
+    ext = `.${ext[0]}`;
+    const { config, fs } = RNFetchBlob;
+    const pictureDir = fs.dirs.PictureDir;
+
+    const options = {
+      fileCache: true,
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        notification: true,
+        path: `${pictureDir}/image_${Math.floor((Math.random() * 100) + date.getTime() + date.getSeconds() / 2)}${ext}`,
+        deion: 'Image',
+      },
+    };
+
+    config(options)
+      .fetch('GET', imgUrl)
+      .then((res) => {
+        console.log('res', res);
+      });
+
+    return options.addAndroidDownloads.path;
   };
 
-  const renderFooter = () => (
-    getData.loading && <ActivityIndicator color="#777" size="large" />
-  );
+  const downloadList = () => {
+    getData.data.map((item) => {
+      savePeople({
+        nameTitle: item.name.title,
+        nameFirst: item.name.first,
+        nameLast: item.name.last,
+        gender: item.gender,
+        pictureThumbnail: downloadImage(item.picture.thumbnail),
+        pictureLarge: item.picture.large,
+        email: item.email,
+        locationCity: item.location.city,
+        locationState: item.location.state,
+        locationCountry: item.location.country,
+        phone: item.phone,
+        cell: item.cell,
+      });
+    });
+  };
 
   return (
     <View style={styles.container}>
-
+      <Button
+        onPress={downloadList}
+        title="Baixar"
+      />
       {getData.loading && !getData.data ? (
         <View style={styles.containerLoading}>
           <ActivityIndicator color="#777" size="large" />
         </View>
       ) : (
         <FlatList
-          data={arrayData}
+          data={arrayData.length ? arrayData : getData.data}
           renderItem={renderItem}
           keyExtractor={(item, index) => String(index)}
-          onEndReached={loadPage}
           initialNumToRender={10}
-          onEndReachedThreshold={0.02}
-          ListFooterComponent={renderFooter}
           removeClippedSubviews
         />
       )}
@@ -89,55 +134,10 @@ const styles = StyleSheet.create({
   container: {
     marginTop: '6%',
   },
-
-  containerLoading: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  card: {
-    width: '94%',
-    height: height * 0.2,
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    marginBottom: '6%',
-    borderRadius: 10,
-    alignItems: 'center',
-    alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    paddingRight: '5%',
-  },
-
-  cardImage: {
-    width: '46%',
-    height: '100%',
-    borderBottomLeftRadius: 10,
-    borderTopLeftRadius: 10,
-  },
-
-  cardContent: {
-    padding: '3%',
-  },
-
-  title: {
-    fontSize: scaleFontSize(14),
-    fontWeight: 'bold',
-  },
-
-  number: {
-    fontSize: scaleFontSize(10),
-    color: '#444',
-    marginTop: '4%',
-  },
 });
 
-export default Main;
+const enhanceWithPeople = withObservables([], () => ({
+  people: observePeople(),
+}));
+
+export default enhanceWithPeople(Main);

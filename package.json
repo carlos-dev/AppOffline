@@ -10,12 +10,15 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@nozbe/watermelondb": "^0.22.0",
+    "@nozbe/with-observables": "^1.4.0",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/native": "^5.9.4",
     "@react-navigation/stack": "^5.14.5",
     "axios": "^0.21.1",
     "react": "17.0.1",
     "react-native": "0.64.2",
+    "react-native-fetch-blob": "^0.10.8",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-paper": "^4.9.2",
     "react-native-reanimated": "^2.2.0",
@@ -31,6 +34,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
+    "@babel/plugin-proposal-decorators": "^7.14.5",
     "@babel/runtime": "^7.14.6",
     "@react-native-community/eslint-config": "^3.0.0",
     "babel-eslint": "^10.1.0",

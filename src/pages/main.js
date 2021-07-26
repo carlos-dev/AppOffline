@@ -30,6 +30,9 @@ const Main = ({ navigation }) => {
   const dispatch = useDispatch();
   const { getData } = useSelector((state) => state);
 
+  /**
+ * function that gets all data from the database and fills an array
+ */
   const getDataPeople = async () => {
     const arrayPeople = [];
 
@@ -45,7 +48,7 @@ const Main = ({ navigation }) => {
   /**
  * function that downloads the images and returns the image path
  * @param   {String}
- * @returns {Number}
+ * @returns {String}
  */
   const downloadImage = (pictureThumbnail) => {
     const date = new Date();
@@ -77,9 +80,7 @@ const Main = ({ navigation }) => {
   };
 
   /**
- * function that downloads the images and returns the image path
- * @param   {String}
- * @returns {Number}
+ * function that downloads the page and saves to the database
  */
   const downloadList = () => {
     getData.data.map((item) => {
@@ -147,10 +148,7 @@ const Main = ({ navigation }) => {
 
     if (download) {
       downloadList();
-      console.log('downloadList', getData);
     }
-
-    console.log('arrayPeople', arrayData);
   }, [getData]);
 
   const renderItem = (data) => (

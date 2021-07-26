@@ -38,6 +38,10 @@ export const savePeople = async ({
   });
 };
 
+/**
+ * function that takes all data from the database and returns an array of data
+ * @returns {Array}
+ */
 export const getPeople = async () => {
   const data = database.get('people');
   const peoples = await data.query().fetch();
@@ -45,6 +49,10 @@ export const getPeople = async () => {
   return peoples;
 };
 
+/**
+ * function that takes specific data from the database and returns an array of data
+ * @returns {Array}
+ */
 export const getPeopleUnique = async (id) => {
   const data = database.get('people');
   const peopleUnique = await data.query(
@@ -54,6 +62,10 @@ export const getPeopleUnique = async (id) => {
   return peopleUnique;
 };
 
+/**
+ * function that deletes an item from the database
+ * @param {String}
+ */
 export const deletePeople = async (id) => {
   const data = database.get('people');
 

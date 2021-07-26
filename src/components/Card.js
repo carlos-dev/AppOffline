@@ -9,9 +9,7 @@ import scaleFontSize from '../utils/scaleFontSize';
 const { height } = Dimensions.get('window');
 
 const Card = ({ navigation, listData, localData }) => {
-  console.log('listData', listData);
   const pictureThumbnail = Image.resolveAssetSource({ uri: `file://${listData.item.picture_thumbnail}` });
-  console.log('pictureThumbnail', pictureThumbnail);
 
   return (
     localData ? (

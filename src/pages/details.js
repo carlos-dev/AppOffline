@@ -50,8 +50,6 @@ const Details = ({ navigation }) => {
     }, 3000);
   };
 
-  console.log(people);
-
   return (
     <>
       <SnackbarComponent text="Item deletado com sucesso" color="#088710" state={snackbarVisible} />

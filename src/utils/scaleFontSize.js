@@ -1,10 +1,15 @@
 import { Dimensions } from 'react-native';
 
-const SCREEN_WIDTH = Dimensions.get('window').width; // get current width
-const SCALE = 325; // constant, 325 is standard width of  iphone 5
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCALE = 325;
 
+/**
+ * function that makes the font responsive
+ * @param   {Number}
+ * @returns {Number}
+ */
 const scaleFontSize = (fontSize) => {
-  const ratio = fontSize / SCALE; // get ratio based on your standard scale
+  const ratio = fontSize / SCALE;
   const newSize = Math.round(ratio * SCREEN_WIDTH);
   return newSize;
 };

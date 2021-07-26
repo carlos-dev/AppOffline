@@ -7,6 +7,10 @@ import api from '../../services/api';
 import * as GetDataActions from '../actions/getData';
 import * as GetDetailsActions from '../actions/getDetails';
 
+/**
+ * function that makes an API request and returns an array of data
+ * @param {Object}
+ */
 function* getData(action) {
   try {
     const { results, page } = action.payload;
@@ -20,6 +24,10 @@ function* getData(action) {
   }
 }
 
+/**
+ * function that makes an API request and returns an array with the details
+ * @param {Object}
+ */
 function* getDetails(action) {
   try {
     const { user } = action.payload;

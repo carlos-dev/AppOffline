@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import React from 'react';
 import {
   View, StyleSheet, Text, Image, TouchableOpacity, Dimensions,
@@ -8,12 +9,14 @@ import scaleFontSize from '../utils/scaleFontSize';
 const { height } = Dimensions.get('window');
 
 const Card = ({ navigation, listData, localData }) => {
-  const pictureThumbnail = listData.item.picture_thumbnail;
+  console.log('listData', listData);
+  const pictureThumbnail = Image.resolveAssetSource({ uri: `file://${listData.item.picture_thumbnail}` });
+  console.log('pictureThumbnail', pictureThumbnail);
 
   return (
     localData ? (
       <TouchableOpacity activeOpacity={0.7} style={styles.card} onPress={() => navigation.navigate('Details', { id: listData.item.id })}>
-        <Image style={styles.cardImage} source={{ uri: pictureThumbnail }} />
+        <Image style={styles.cardImage} source={pictureThumbnail} />
 
         <View style={styles.cardContent}>
           <Text style={styles.title} numberOfLines={1}>
@@ -24,7 +27,7 @@ const Card = ({ navigation, listData, localData }) => {
         </View>
       </TouchableOpacity>
     ) : (
-      <TouchableOpacity activeOpacity={0.7} style={styles.card} onPress={() => navigation.navigate('Details', { user: listData.item.login.username })}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.card} onPress={() => navigation.navigate('Details', { id: listData.item.login.username })}>
         <Image style={styles.cardImage} source={{ uri: listData.item.picture.large }} />
 
         <View style={styles.cardContent}>

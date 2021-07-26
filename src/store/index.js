@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-underscore-dangle */
 /* global __DEV__ */
 
 import { createStore, compose, applyMiddleware } from 'redux';
@@ -17,7 +19,11 @@ const composer = __DEV__
   ? compose(applyMiddleware(...middlewares), console.tron.createEnhancer())
   : applyMiddleware(...middlewares);
 
-const store = createStore(rootReducer, composer);
+const store = createStore(
+  rootReducer,
+  composer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+);
 
 sagaMiddleware.run(rootSaga);
 

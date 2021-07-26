@@ -9,9 +9,9 @@ import * as GetDetailsActions from '../actions/getDetails';
 
 function* getData(action) {
   try {
-    const { page } = action.payload;
+    const { results, page } = action.payload;
 
-    const { data } = yield call(api.get, `/api/?results=${page}`);
+    const { data } = yield call(api.get, `/api/?page=${page}&results=${results}`);
 
     yield put(GetDataActions.getDataSuccess(data.results));
   } catch (error) {
@@ -25,7 +25,6 @@ function* getDetails(action) {
     const { user } = action.payload;
 
     const { data } = yield call(api.get, `/api/?username=${user}`);
-    console.log('data', data);
 
     yield put(GetDetailsActions.getDetailsSuccess(data.results));
   } catch (error) {

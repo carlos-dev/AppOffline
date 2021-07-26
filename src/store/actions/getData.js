@@ -1,7 +1,8 @@
-export const getDataRequest = (page) => ({
+export const getDataRequest = (page, results) => ({
   type: 'GET_DATA_REQUEST',
   payload: {
     page,
+    results,
   },
 });
 
@@ -12,9 +13,9 @@ export const getDataSuccess = (data) => ({
   },
 });
 
-export const getDataFailure = (page) => ({
+export const getDataFailure = (data) => ({
   type: 'GET_DATA_FAILURE',
   payload: {
-    page,
+    data,
   },
 });

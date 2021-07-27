@@ -15,6 +15,7 @@ import Loading from '../components/Loading';
 import * as GetDetailsActions from '../store/actions/getDetails';
 import * as GetDataActions from '../store/actions/getData';
 
+import useNetInfo from '../hooks/useNetInfo';
 import scaleFontSize from '../utils/scaleFontSize';
 import SnackbarComponent from '../components/Snackbar';
 
@@ -24,12 +25,15 @@ const Details = ({ navigation }) => {
   const [people, setPeople] = useState([]);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
 
+  const netState = useNetInfo();
   const route = useRoute();
   const dispatch = useDispatch();
   const { getDetails } = useSelector((state) => state);
 
   useEffect(() => {
-    dispatch(GetDetailsActions.getDetailsRequest(route.params.id));
+    if (netState) {
+      dispatch(GetDetailsActions.getDetailsRequest(route.params.id));
+    }
 
     const peopleUnique = getPeopleUnique(route.params.id);
     peopleUnique.then((response) => {
@@ -45,7 +49,9 @@ const Details = ({ navigation }) => {
     }, 1000);
 
     setTimeout(() => {
-      dispatch(GetDataActions.getDataRequest(1, 10));
+      if (netState) {
+        dispatch(GetDataActions.getDataRequest(1, 10));
+      }
       navigation.navigate('Main');
     }, 3000);
   };

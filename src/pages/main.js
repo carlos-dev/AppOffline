@@ -17,7 +17,7 @@ import useNetInfo from '../hooks/useNetInfo';
 
 import * as GetDataActions from '../store/actions/getData';
 import {
-  observePeople, savePeople, deleteAll, getPeople,
+  observePeople, savePeople, getPeople,
 } from '../database/helpers';
 
 const Main = ({ navigation }) => {
@@ -58,7 +58,7 @@ const Main = ({ navigation }) => {
 
     ext = `.${ext[0]}`;
     const { config, fs } = RNFetchBlob;
-    const pictureDir = fs.dirs.DocumentDir;
+    const pictureDir = fs.dirs.PictureDir;
 
     const options = {
       fileCache: true,
@@ -110,6 +110,8 @@ const Main = ({ navigation }) => {
   };
 
   const handleList = async (page) => {
+    if (!netState) return;
+
     const storage = await AsyncStorage.getItem(`page${page}`);
 
     if (storage) {
@@ -129,11 +131,12 @@ const Main = ({ navigation }) => {
   };
 
   useEffect(() => {
-    dispatch(GetDataActions.getDataRequest(1, 10));
-
     getDataPeople();
-    console.log('netState', netState);
   }, []);
+
+  useEffect(() => {
+    if (netState) dispatch(GetDataActions.getDataRequest(1, 10));
+  }, [netState]);
 
   useEffect(() => {
     if (getData.loading) return;
@@ -141,8 +144,6 @@ const Main = ({ navigation }) => {
     if (getData.error) return;
 
     if (!getData.data) return;
-
-    // deleteAll();
 
     getDataPeople();
 

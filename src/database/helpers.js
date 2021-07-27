@@ -45,7 +45,7 @@ export const savePeople = async ({
 export const getPeople = async () => {
   const data = database.get('people');
   const peoples = await data.query().fetch();
-  console.log('people', peoples);
+
   return peoples;
 };
 

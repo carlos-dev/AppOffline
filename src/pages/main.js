@@ -106,6 +106,8 @@ const Main = ({ navigation }) => {
 
     setTimeout(() => {
       setSnackbarVisible(false);
+
+      getDataPeople();
     }, 8000);
   };
 
